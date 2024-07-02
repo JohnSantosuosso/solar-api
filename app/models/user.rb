@@ -12,7 +12,7 @@ class User < ApplicationRecord
   end
 
   def jwt_token
-    JWT.encode(jwt_payload, Rails.application.credentials.dig(:devise, :jwt_secret_key), 'HS256')
+    JWT.encode(jwt_payload, Rails.application.credentials[:jwt_secret_key], 'HS256')
   end
 
   def self.from_token_payload(payload)
