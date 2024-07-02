@@ -5,11 +5,23 @@ class User < ApplicationRecord
 
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
+  before_create :generate_jti
+
   def jwt_payload
-    { id: id }
+    { id: id, jti: jti }
   end
 
   def jwt_token
     JWT.encode(jwt_payload, Rails.application.credentials.dig(:devise, :jwt_secret_key), 'HS256')
+  end
+
+  def self.from_token_payload(payload)
+    find(payload['id'])
+  end
+
+  private
+
+  def generate_jti
+    self.jti = SecureRandom.uuid
   end
 end
